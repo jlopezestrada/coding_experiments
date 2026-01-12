@@ -17,11 +17,7 @@ MUTATION_RATE = 0.01
 
 
 def initialize_population(population_size: int, input: float) -> list[float]:
-    population = []
-    for i in range(population_size):
-        population.append(random.uniform(0, max(input, 1)))
-
-    return population
+    return [random.uniform(0, max(1, input)) for _ in range(population_size)]
 
 
 def selection():

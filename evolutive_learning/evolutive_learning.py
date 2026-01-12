@@ -8,14 +8,20 @@
 #    Selection = Selects a number that would continue the generations
 #    Crossover = Perform an operation with another number
 #    Mutation = Perform an operation with a random number
+import random
+
 POPULATION_SIZE = 100
-GENES = 10
+GENES = 1
 GENERATIONS = 10
 MUTATION_RATE = 0.01
 
 
-def initialize_population():
-    return 0
+def initialize_population(population_size: int, input: float) -> list[float]:
+    population = []
+    for i in range(population_size):
+        population.append(random.uniform(0, max(input, 1)))
+
+    return population
 
 
 def selection():
@@ -30,5 +36,15 @@ def mutation():
     return 0
 
 
-def fitness_function():
-    return 0
+def fitness_function(individual: float, target: float) -> float:
+    return abs(pow(individual, 2) - target)
+
+
+def main():
+    input = 81
+    population = initialize_population(population_size=POPULATION_SIZE, input=input)
+    print(population)
+
+
+if __name__ == "__main__":
+    main()

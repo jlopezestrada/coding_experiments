@@ -8,28 +8,38 @@
 #    Selection = Selects a number that would continue the generations
 #    Crossover = Perform an operation with another number
 #    Mutation = Perform an operation with a random number
+
 import random
 
-POPULATION_SIZE = 100
+POPULATION_SIZE = 10000
 GENES = 1
-GENERATIONS = 10
-MUTATION_RATE = 0.01
+GENERATIONS = 10000
+MUTATION_RATE = 0.2
 
 
 def initialize_population(population_size: int, input: float) -> list[float]:
     return [random.uniform(0, max(1, input)) for _ in range(population_size)]
 
 
-def selection():
-    return 0
+def selection(population: list[float], target: float) -> float:
+    candidates = random.choices(population, k=2)
+    score_1 = fitness_function(candidates[0], target)
+    score_2 = fitness_function(candidates[1], target)
+    if score_1 < score_2:
+        return candidates[0]
+    else:
+        return candidates[1]
 
 
-def crossover():
-    return 0
+def crossover(parent_1: float, parent_2: float) -> float:
+    return (parent_1 + parent_2) / 2
 
 
-def mutation():
-    return 0
+def mutation(child: float, rate: float):
+    if random.random() < rate:
+        scale_factor = random.uniform(0.8, 1.2)
+        return child * scale_factor
+    return child
 
 
 def fitness_function(individual: float, target: float) -> float:
@@ -37,9 +47,27 @@ def fitness_function(individual: float, target: float) -> float:
 
 
 def main():
-    input = 81
+    input = 323
     population = initialize_population(population_size=POPULATION_SIZE, input=input)
-    print(population)
+    for generation in range(GENERATIONS):
+        next_gen = []
+        while len(next_gen) < POPULATION_SIZE:
+            parent_1 = selection(population, input)
+            parent_2 = selection(population, input)
+
+            child = crossover(parent_1, parent_2)
+            child = mutation(child, rate=MUTATION_RATE)
+
+            next_gen.append(child)
+        population = next_gen
+
+        best_individual = min(population, key=lambda ind: fitness_function(ind, input))
+        print(
+            f"Gen {generation}: Best solution = {best_individual}, Error = {fitness_function(best_individual, input)}"
+        )
+        if fitness_function(best_individual, input) < 0.0001:
+            print(f"# Best solution = {best_individual} @ Gen {generation} #")
+            return
 
 
 if __name__ == "__main__":
